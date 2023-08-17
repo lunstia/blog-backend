@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 
 const Comment = new Schema({
-    post: {type: Schema.Types.ObjectId, ref: 'Post', required},
-    user: {type: Schema.Types.ObjectId, ref: 'User', required},
-    comment: {type: String, minLength: 1, required},
+    post: {type: Schema.Types.ObjectId, ref: 'Post', required: true},
+    user: {type: Schema.Types.ObjectId, ref: 'User', required: true},
+    comment: {type: String, minLength: 1, required: true},
     date: {type: Date, default: Date.now()}
 });
 
