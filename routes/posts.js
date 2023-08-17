@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import verifyToken from '../utils/verifyToken.js';
 const router = Router();
 
 router.get('/', (req, res) => {
@@ -12,11 +13,13 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
-    // Make sure to verify jwt token
-    // Posts a post
+router.post('/', verifyToken, (req, res) => {
+    if (!req.user.isAdmin) {
+        res.status(403).json({message: "User is unauthorized"});
+        return
+    } 
     res.json({
-        message: "Not implemented yet"
+        message: "CREATE POST: NOT IMPLEMENTED YET"
     });
 });
 
@@ -24,11 +27,11 @@ router.post('/:id', (req, res) => {
     // post a comment
 })
 
-router.update('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
     // update a post
 })
 
-router.update('/:id/:comment_id', (req, res) => {
+router.put('/:id/:comment_id', (req, res) => {
     // updates a comment
 })
 
