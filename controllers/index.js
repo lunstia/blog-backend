@@ -23,7 +23,7 @@ index.login_post = asyncHandler( async (req, res) => {
         return
     }
 
-    const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY)
+    const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '15m'})
     res.json({message: "Login successful", token});
 })
 
@@ -65,7 +65,7 @@ index.signup_post = [
             const user = new User({username: req.body.username, password: hash})
             await user.save()
 
-            const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY)
+            const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '3h'})
             res.json({message: "Signup successful!", token});
         }
     })

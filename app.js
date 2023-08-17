@@ -1,5 +1,4 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import cors from 'cors';
 
@@ -18,7 +17,5 @@ app.use(express.urlencoded({extended: false}));
 
 app.use('/', index);
 app.use('/posts', posts);
-
-
 
 app.listen(process.env.PORT, () => console.log("Listening on " + process.env.PORT))
