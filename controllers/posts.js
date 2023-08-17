@@ -10,7 +10,6 @@ const index = {};
 index.Posts_post = [
     verifyToken, 
     (req, res) => {
-        console.log(req.user);
         if (!req.user.isAdmin) {
             res.status(403).json({message: "User is unauthorized"});
             return
