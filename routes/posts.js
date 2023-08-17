@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import verifyToken from '../utils/verifyToken.js';
+import postController from '../controllers/posts.js';
 const router = Router();
 
 router.get('/', (req, res) => {
@@ -13,15 +14,7 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', verifyToken, (req, res) => {
-    if (!req.user.isAdmin) {
-        res.status(403).json({message: "User is unauthorized"});
-        return
-    } 
-    res.json({
-        message: "CREATE POST: NOT IMPLEMENTED YET"
-    });
-});
+router.post('/', postController.Posts_post);
 
 router.post('/:id', (req, res) => {
     // post a comment
