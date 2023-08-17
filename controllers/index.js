@@ -24,7 +24,7 @@ index.login_post = asyncHandler( async (req, res) => {
     }
 
     const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY)
-    res.json({token});
+    res.json({message: "Login successful", token});
 })
 
 index.signup_post = [
