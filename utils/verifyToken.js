@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 export default async function verifyToken(req, res, next) {
-    const bearerHeader = req.headers['auth'];
+    const bearerHeader = req.headers['Authorization'];
 
     if (bearerHeader === undefined) {
         res.status(403).json({message: "User is unauthorized"});
