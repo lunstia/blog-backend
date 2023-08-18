@@ -15,7 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.use('/', index);
-app.use('/posts', posts);
+app.use('/api', index);
+app.use('/api/posts', posts);
 
 app.listen(process.env.PORT, () => console.log("Listening on " + process.env.PORT))
