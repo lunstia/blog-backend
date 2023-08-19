@@ -6,7 +6,11 @@ import {body, validationResult} from 'express-validator';
 
 const index = {}
 
-index.login_post = asyncHandler( async (req, res) => {
+index.get_featured = asyncHandler( async (req, res) => {
+    res.sendStatus(404);
+})
+
+index.post_login = asyncHandler( async (req, res) => {
     const userPassword = req.body.password;
     const userName = req.body.username;
 
@@ -27,7 +31,7 @@ index.login_post = asyncHandler( async (req, res) => {
     res.json({message: "Login successful", token});
 })
 
-index.signup_post = [
+index.post_signup = [
     body('username', "Username cannot be empty")
         .trim()
         .exists()
@@ -66,7 +70,7 @@ index.signup_post = [
             await user.save()
 
             const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '3h'})
-            res.json({message: "Signup successful!", token});
+            res.json({message: "Signup successful", token});
         }
     })
 ]
