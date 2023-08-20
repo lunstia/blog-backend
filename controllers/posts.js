@@ -48,4 +48,25 @@ index.get_Posts_Comments = asyncHandler(async (req, res) => {
     res.json({post, comments}); // Comments can return as an empty array cause it's fine for it to be empty.
 });
 
+index.update_Post = asyncHandler(async (req, res) => {
+    res.json({message: "Not implemented yet"});
+});
+
+index.delete_Post = asyncHandler(async (req, res) => {
+    res.json({message: "Not implemented yet"});
+});
+
+index.post_Comment = asyncHandler(async (req, res) => {
+    res.json({message: "Not implemented yet"});
+});
+
+index.update_Comment = asyncHandler(async (req, res) => {
+    res.json({message: "Not implemented yet"});
+});
+
+index.delete_Comment = asyncHandler(async (req, res) => {
+    res.json({message: "Not implemented yet"});
+});
+
+
 export default index
