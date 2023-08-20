@@ -2,12 +2,16 @@ import bcrypt from 'bcrypt';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import Post from '../models/Post.js';
+import Comment from '../models/Comment.js';
 import {body, validationResult} from 'express-validator';
 
 const index = {}
 
 index.get_featured = asyncHandler( async (req, res) => {
-    res.sendStatus(404);
+    const featuredPosts = await Post.find({featured: true, published: true}).sort({datePublished: -1})
+
+    res.json({posts: featuredPosts});
 })
 
 index.post_login = asyncHandler( async (req, res) => {
