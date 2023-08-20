@@ -14,33 +14,36 @@ index.get_featured = asyncHandler( async (req, res) => {
     res.json({posts: featuredPosts});
 })
 
-index.post_login = asyncHandler( async (req, res) => {
-    const userPassword = req.body.password;
-    const userName = req.body.username;
+index.post_login = [
+    body("username", "Username cannot be empty")
+        .trim()
+        .exists()
+        .isLength({min: 1, max: 20})
+        .withMessage("Username cannot be over 20 characters")
+        .escape(),
+    body("password", "Password cannot be empty")
+        .trim()
+        .exists()
+        .escape(),
+    asyncHandler( async (req, res) => {
+        const user = await User.findOne({username: req.body.username}).collation( { locale: 'en_US', strength: 1 } );
+        const storedPassword = user.password;
+        const match = await bcrypt.compare(req.body.password, storedPassword);
+        if (!user || !match) {
+            res.status(401).json({message: "Invalid username or password"});
+            return;
+        }
 
-    if (!userName || !userPassword) {
-        res.sendStatus(400);
-        return
-    }
-
-    const user = await User.findOne({username: userName}).collation( { locale: 'en_US', strength: 1 } )
-    const storedPassword = user.password || "password"
-    const match = await bcrypt.compare(userPassword, storedPassword);
-    if (!user || !match) {
-        res.status(401).json({message: "Invalid username or password"});
-        return
-    }
-
-    const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '15m'})
-    res.json({message: "Login successful", token});
-})
-
+        const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '3h'})
+        res.json({message: "Login successful", token});
+    })
+];
 index.post_signup = [
     body('username', "Username cannot be empty")
         .trim()
         .exists()
         .isLength({min: 1, max: 20})
-        .withMessage('Username must atleast be 1 character and under or equal to 20 characters')
+        .withMessage('Username must be under or equal to 20 characters')
         .custom(value => !/\s/.test(value))
         .withMessage("Username cannot contain any spaces")
         .custom(async value => {
