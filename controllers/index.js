@@ -28,19 +28,21 @@ index.post_login = [
     asyncHandler( async (req, res) => {
         const result = validationResult(req);
         if (!result.isEmpty()) {
-            res.status(400).json({errors: result.errors})
-        } else {
-            const user = await User.findOne({username: req.body.username}).collation( { locale: 'en_US', strength: 1 } );
-            const storedPassword = user.password;
-            const match = await bcrypt.compare(req.body.password, storedPassword);
-            if (!user || !match) {
-                res.status(401).json({message: "Invalid username or password"});
-                return;
-            }
-
-            const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '3h'})
-            res.json({message: "Login successful", token});
+            res.status(400).json({errors: result.errors});
+            return;
         }
+        
+        const user = await User.findOne({username: req.body.username}).collation( { locale: 'en_US', strength: 1 } );
+        const storedPassword = user.password;
+        const match = await bcrypt.compare(req.body.password, storedPassword);
+        if (!user || !match) {
+            res.status(401).json({message: "Invalid username or password"});
+            return;
+        }
+
+        const token = await jwt.sign({user: {_id: user._id, username: user.username, isAdmin: user.isAdmin}}, process.env.SECRET_KEY, {expiresIn: '3h'})
+        res.json({message: "Login successful", token});
+
     })
 ];
 index.post_signup = [
