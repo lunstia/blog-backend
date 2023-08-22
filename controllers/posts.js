@@ -29,9 +29,19 @@ index.post_Posts = [
         .optional()
         .escape(),
     asyncHandler(async (req, res) => {
-        res.json({
-            message: "CREATE POST: NOT IMPLEMENTED YET"
-        });
+        const result = validationResult(req)
+        if (!result.isEmpty) {
+            res.send(400).json({errors: result.errors});
+            return
+        }
+
+        const post = new Post({
+            author: req.user._id,
+            title: req.body.title,
+            post: req.body.post,
+            published: req.body.publish,
+            featured: req.body.feature
+        })
     })
 ]
 
