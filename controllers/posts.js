@@ -32,7 +32,7 @@ index.post_Posts = [
         const result = validationResult(req)
         if (!result.isEmpty) {
             res.send(400).json({errors: result.errors});
-            return
+            return;
         }
 
         const post = new Post({
@@ -41,7 +41,10 @@ index.post_Posts = [
             post: req.body.post,
             published: req.body.publish,
             featured: req.body.feature
-        })
+        });
+
+        await post.save();
+        res.json({postId: post._id});
     })
 ]
 
