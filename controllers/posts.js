@@ -90,8 +90,8 @@ index.get_Posts_Comments = [
     })
 ];
 
-index.update_Post = [
-    verifyToken,
+index.update_Post = [ // Might separate higher priviledges in the future,
+    verifyToken,      // so an admin can do anything but a poster cant update others or delete others etc, but for now heres limitations.
     verifyAdmin,
     body("title")
         .trim()
@@ -156,14 +156,23 @@ index.update_Post = [
         }
 
         await Post.updateOne(post, newPost);
-        res.json({postId: post._id});
+        res.json({postId: req.params.id});
     })
 ]
 
-index.delete_Post = asyncHandler(async (req, res) => {
-    res.json({message: "Not implemented yet"});
-});
+index.delete_Post = [
+    verifyToken, 
+    verifyAdmin,// Any admin can delete
+    asyncHandler(async (req, res) => {
+        if (!isValidObjectId(req.params.id)) {
+            res.sendStatus(404);
+            return;
+        }
 
+        await Post.findByIdAndDelete(req.params.id);
+        res.sendStatus(200);
+    })
+];
 index.post_Comment = asyncHandler(async (req, res) => {
     res.json({message: "Not implemented yet"});
 });
