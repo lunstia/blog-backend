@@ -78,10 +78,10 @@ index.get_Posts_Comments = [
             req.post = post;
             req.comments = comments;
             next();
-            return
+            return;
         }
 
-        res.json({post, comments}); // Comments can return as an empty array cause it's fine for it to be empty.
+        res.json({post, comments});
     }),
     verifyToken,
     verifyAdmin,
