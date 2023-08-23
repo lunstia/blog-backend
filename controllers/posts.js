@@ -31,7 +31,7 @@ index.post_Posts = [
     asyncHandler(async (req, res) => {
         const result = validationResult(req)
         if (!result.isEmpty) {
-            res.send(400).json({errors: result.errors});
+            res.status(400).json({errors: result.errors});
             return;
         }
 
@@ -56,29 +56,39 @@ index.get_Posts = asyncHandler(async (req, res) => {
     });
 })
 
-index.get_Posts_Comments = asyncHandler(async (req, res, next) => {
-    if (!isValidObjectId(req.params.id)) {
-        res.sendStatus(404);
-        return;
-    }
+index.get_Posts_Comments = [
 
-    const [post, comments] = await Promise.all([
-        await Post.findById(req.params.id),
-        await Comment.find({post: req.params.id}).sort({date: -1}).limit(25)
-    ])
+    asyncHandler(async (req, res, next) => {
+        if (!isValidObjectId(req.params.id)) {
+            res.sendStatus(404);
+            return;
+        }
 
-    if (post === null) {
-        res.sendStatus(404);
-        return;
-    }
+        const [post, comments] = await Promise.all([
+            await Post.findById(req.params.id),
+            await Comment.find({post: req.params.id}).sort({date: -1}).limit(25)
+        ])
 
-    if (post.published === false) {
-        verifyToken(req, res, next);
-        verifyAdmin(req, res, next);
-    }
+        if (post === null) {
+            res.sendStatus(404);
+            return;
+        }
 
-    res.json({post, comments}); // Comments can return as an empty array cause it's fine for it to be empty.
-});
+        if (post.published === false) {
+            req.post = post;
+            req.comments = comments;
+            next();
+            return
+        }
+
+        res.json({post, comments}); // Comments can return as an empty array cause it's fine for it to be empty.
+    }),
+    verifyToken,
+    verifyAdmin,
+    asyncHandler(async (req, res) => {
+        res.json({post: req.post, comments: req.comments}); // not sure if this is how you should do it
+    })
+];
 
 index.update_Post = [
     verifyToken,
@@ -107,19 +117,19 @@ index.update_Post = [
 
         const result = validationResult(req)
         if (!result.isEmpty) {
-            res.send(400).json({errors: result.errors});
+            res.status(400).json({errors: result.errors});
             return;
         }
         
         const post = Post.findById(req.params.id);
 
         if (post === null) {
-            res.send(404).json({error: "Post was not found"});
+            res.status(404).json({error: "Post was not found"});
             return
         }
         
-        if (post.author !== req.user._id) {
-            res.send(403).json({error: "Only the author can update their own posts"});
+        if (post.author !== req.user.id) {
+            res.status(403).json({error: "Only the author can update their own posts"});
             return
         }
 
