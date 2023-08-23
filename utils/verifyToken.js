@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 export default async function verifyToken(req, res, next) {
     const bearerHeader = req.headers['authorization'];
     if (bearerHeader === undefined) {
-        res.status(403).json({message: "User is unauthorized"});
+        res.status(401).json({message: "User is unauthenticated"});
         return
     }
 
@@ -12,7 +12,7 @@ export default async function verifyToken(req, res, next) {
         const authData = await jwt.verify(bearerToken, process.env.SECRET_KEY);
         req.user = authData.user;
     } catch(err) {
-        res.status(403).json({message: "User is unauthorized"});;
+        res.status(401).json({message: "User is unauthenticated"});;
         return
     }
 
