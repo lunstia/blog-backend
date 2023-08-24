@@ -173,9 +173,37 @@ index.delete_Post = [
         res.sendStatus(200);
     })
 ];
-index.post_Comment = asyncHandler(async (req, res) => {
-    res.json({message: "Not implemented yet"});
-});
+index.post_Comment = [
+    verifyToken,
+    body("comment", "Comment cannot be empty")
+        .trim()
+        .exists()
+        .isLength({max: 1000})
+        .withMessage("Comment must be under 1000 characters")
+        .escape(),
+    asyncHandler(async (req, res) => {
+        if (!isValidObjectId(req.params.id)) {
+            res.sendStatus(404);
+            return;
+        }
+
+        const post = Post.findById(req.params.id);
+
+        if (post === null) {
+            res.sendStatus(404);
+            return;
+        }
+
+        const comment = new Comment({
+            user: req.user._id,
+            post: req.params.id,
+            comment: req.body.comment
+        })
+
+        await comment.save();
+        res.sendStatus(200);
+    })
+]
 
 index.update_Comment = asyncHandler(async (req, res) => {
     res.json({message: "Not implemented yet"});
