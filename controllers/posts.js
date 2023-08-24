@@ -121,14 +121,14 @@ index.update_Post = [ // Might separate higher priviledges in the future,
             return;
         }
         
-        const post = Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id);
 
         if (post === null) {
             res.status(404).json({error: "Post was not found"});
             return
         }
-        
-        if (post.author !== req.user._id) {
+
+        if (!post.author.equals(req.user._id)) {
             res.status(403).json({error: "Only the author can update their own posts"});
             return
         }
@@ -187,7 +187,7 @@ index.post_Comment = [
             return;
         }
 
-        const post = Post.findById(req.params.id);
+        const post = await Post.findById(req.params.id);
 
         if (post === null) {
             res.sendStatus(404);
