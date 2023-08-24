@@ -12,13 +12,13 @@ const index = {};
 index.post_Posts = [
     verifyToken,
     verifyAdmin,
-    body("title")
+    body("title", "Title cannot be empty")
         .trim()
-        .exists()
+        .notEmpty()
         .escape(),
-    body("post")
+    body("post", "Post cannot be empty")
         .trim()
-        .exists()
+        .notEmpty()
         .escape(),
     body("publish")
         .isBoolean()
@@ -30,7 +30,7 @@ index.post_Posts = [
         .escape(),
     asyncHandler(async (req, res) => {
         const result = validationResult(req)
-        if (!result.isEmpty) {
+        if (!result.isEmpty()) {   
             res.status(400).json({errors: result.errors});
             return;
         }
@@ -93,13 +93,13 @@ index.get_Posts_Comments = [
 index.update_Post = [ // Might separate higher priviledges in the future,
     verifyToken,      // so an admin can do anything but a poster cant update others or delete others etc, but for now heres limitations.
     verifyAdmin,
-    body("title")
+    body("title", "Title cannot be empty")
         .trim()
-        .exists()
+        .notEmpty()
         .escape(),
-    body("post")
+    body("post", "Post cannot be empty")
         .trim()
-        .exists()
+        .notEmpty()
         .escape(),
     body("publish")
         .isBoolean()
@@ -116,7 +116,7 @@ index.update_Post = [ // Might separate higher priviledges in the future,
         }
 
         const result = validationResult(req)
-        if (!result.isEmpty) {
+        if (!result.isEmpty()) {
             res.status(400).json({errors: result.errors});
             return;
         }
@@ -128,7 +128,7 @@ index.update_Post = [ // Might separate higher priviledges in the future,
             return
         }
         
-        if (post.author !== req.user.id) {
+        if (post.author !== req.user._id) {
             res.status(403).json({error: "Only the author can update their own posts"});
             return
         }
@@ -177,7 +177,7 @@ index.post_Comment = [
     verifyToken,
     body("comment", "Comment cannot be empty")
         .trim()
-        .exists()
+        .notEmpty()
         .isLength({max: 1000})
         .withMessage("Comment must be under 1000 characters")
         .escape(),
