@@ -249,9 +249,32 @@ index.update_Comment = [
     })
 ]
 
-index.delete_Comment = asyncHandler(async (req, res) => {
-    res.json({message: "Not implemented yet"});
-});
+index.delete_Comment = 
+[
+    verifyToken,
+    asyncHandler(async (req, res) => {
+        if (!isValidObjectId(req.params.id) || !isValidObjectId(req.params.comment_id)) {
+            res.sendStatus(404);
+            return;
+        }
 
+        const comment = await Comment.findById(req.params.comment_id);
+
+        if (comment === null) {
+            res.sendStatus(404);
+            return;
+        }
+
+        console.log(req.user, comment.user)
+        if (!comment.user.equals(req.user._id) && !req.user.isAdmin) {
+            res.status(403).json({error: "Invalid permissions to delete this comment"});
+            return;
+        }
+
+        await Comment.deleteOne(comment);
+        res.sendStatus(200);
+
+    })
+]
 
 export default index
