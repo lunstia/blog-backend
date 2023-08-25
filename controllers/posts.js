@@ -205,9 +205,49 @@ index.post_Comment = [
     })
 ]
 
-index.update_Comment = asyncHandler(async (req, res) => {
-    res.json({message: "Not implemented yet"});
-});
+index.update_Comment = [
+    verifyToken,
+    body("comment", "Comment cannot be empty")
+        .trim()
+        .notEmpty()
+        .isLength({max: 1000})
+        .withMessage("Comment must be under 1000 characters")
+        .escape(),
+    asyncHandler(async (req, res) => {
+        if (!isValidObjectId(req.params.id)) {
+            res.sendStatus(404);
+            return;
+        }
+
+        const comment = await Comment.findById(req.params.comment_id);
+
+        if (comment === null) {
+            res.sendStatus(404);
+            return;
+        }
+
+        if (!comment.user.equals(req.user._id)) {
+            res.status(403).json({error: "Comment is not associated with user"});
+            return;
+        }
+
+        if (!comment.post.equals(req.params.id)) {
+            res.status(400).json({error: "Wrong post associated with comment"});
+            return;
+        }
+
+        const newComment = new Comment({
+            post: comment.post,
+            user: comment.user,
+            comment: req.body.comment,
+            date: comment.date,
+            _id: req.params.comment_id
+        })
+
+        await Comment.updateOne(comment, newComment);
+        res.json({newComment});
+    })
+]
 
 index.delete_Comment = asyncHandler(async (req, res) => {
     res.json({message: "Not implemented yet"});
