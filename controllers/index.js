@@ -31,9 +31,9 @@ index.post_login = [
             res.status(400).json({errors: result.errors});
             return;
         }
-        
+
         const user = await User.findOne({username: req.body.username}).collation( { locale: 'en_US', strength: 1 } );
-        const storedPassword = user.password;
+        const storedPassword = user ? user.password : '';
         const match = await bcrypt.compare(req.body.password, storedPassword);
         if (!user || !match) {
             res.status(401).json({message: "Invalid username or password"});
