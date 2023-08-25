@@ -201,7 +201,7 @@ index.post_Comment = [
         })
 
         await comment.save();
-        res.sendStatus(200);
+        res.json({comment});
     })
 ]
 
