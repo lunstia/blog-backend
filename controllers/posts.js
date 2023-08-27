@@ -49,7 +49,7 @@ index.post_Posts = [
 ]
 
 index.get_Posts = asyncHandler(async (req, res) => {
-    const posts = await Post.find({published: true}).sort({datePublished: -1}).limit(25);
+    const posts = await Post.find({published: true}, "title author datePublished featured").sort({datePublished: -1}).limit(25);
 
     res.json({
         posts
